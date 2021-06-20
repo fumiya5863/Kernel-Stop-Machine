@@ -19,6 +19,9 @@ static unsigned int chardev_major;
 static struct cdev chardev_cdev;
 static struct class *chardev_class = NULL;
 
+static unsigned long stop_time = 0;
+static unsigned char buffer[256];
+
 static int chardev_open(struct inode *inode, struct file *filp)
 {
     printk("chardev_open\n");
@@ -33,18 +36,24 @@ static int chardev_release(struct inode *inode, struct file *filp)
 
 static int stop_func(void *arg)
 {
-    mdelay(5000);
+    mdelay(stop_time);
     return 0;
 }
 
 static ssize_t chardev_write(struct file *filp, const char __user *buf, size_t count, loff_t *f_pos)
 {
-    int ret = 0;
     printk("stop machine\n");  
 
-    ret = stop_machine(stop_func, NULL, NULL);
+    if (copy_from_user(buffer, buf, count) != 0) {
+        return -EFAULT;
+    }
 
-    if (ret != 0) {
+    if(kstrtol(buffer, 0, &stop_time) != 0) {
+        printk(KERN_ERR "Failed to kstrtol\n");
+        return -1;
+    }
+
+    if (stop_machine(stop_func, NULL, NULL) != 0) {
         printk(KERN_ERR "Failed to stop_machine\n");
         return -1;
     }
@@ -53,6 +62,7 @@ static ssize_t chardev_write(struct file *filp, const char __user *buf, size_t c
 }
 
 struct file_operations char_device_fops = {
+    .owner = THIS_MODULE,
     .open = chardev_open,
     .release = chardev_release,
     .write = chardev_write,
