@@ -1,7 +1,7 @@
 PWD := $(shell pwd)
 KDIR := /lib/modules/$(shell uname -r)/build
 
-obj-m += hello.o
+obj-m += chardev_stop_machine.c.o
 
 SUBDIRS := $(PWD)
 COMMON_OPS = -C $(KDIR) M='$(SUBDIRS)'
