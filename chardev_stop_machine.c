@@ -91,7 +91,7 @@ static __init int chardev_init(void)
         return -1;
     }
 	
-    device_create(chardev_class, NULL, MKDEV(chardev_major, MINOR_BASE), NULL, "stop-cpu");
+    device_create(chardev_class, NULL, MKDEV(chardev_major, MINOR_BASE), NULL, DRIVER_NAME);
 
 	return 0;
 }
