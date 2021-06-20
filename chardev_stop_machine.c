@@ -43,6 +43,12 @@ static ssize_t chardev_write(struct file *filp, const char __user *buf, size_t c
     printk("stop machine\n");  
 
     ret = stop_machine(stop_func, NULL, NULL);
+
+    if (ret != 0) {
+        printk(KERN_ERR "Failed to stop_machine\n");
+        return -1;
+    }
+    
     return count;
 }
 
