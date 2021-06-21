@@ -20,7 +20,7 @@ SSH
 git clone git@github.com:fumiya5863/Kernel-Stop-Machine.git
 ```
 
-## How to use(HelloWorld)
+## How to use(Stop-Machine)
 
 ```shell
 sudo apt install linux-headers-$(uname -r)
